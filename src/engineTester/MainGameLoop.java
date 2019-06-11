@@ -5,12 +5,15 @@ import java.util.List;
 import java.util.Random;
 
 import org.lwjgl.opengl.Display;
+import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
 import entities.Camera;
 import entities.Entity;
 import entities.Light;
 import entities.Player;
+import guis.GuiRenderer;
+import guis.GuiTexture;
 import models.RawModel;
 import models.TexturedModel;
 import renderEngine.DisplayManager;
@@ -51,8 +54,6 @@ public class MainGameLoop {
 		fernTextureAtlas.setNumberOfRows(2);
 
 		TexturedModel fern = new TexturedModel(OBJLoader.loadObjModel("fern", loader), fernTextureAtlas);
-		RawModel personModel = OBJLoader.loadObjModel("person", loader);
-		TexturedModel person = new TexturedModel(personModel, new ModelTexture(loader.loadTexture("playerTexture")));
 
 		grass.getTexture().setHasTransparency(true);
 		grass.getTexture().setUseFakeLighting(true);
@@ -84,14 +85,27 @@ public class MainGameLoop {
 			}
 		}
 
-		Light light = new Light(new Vector3f(20000, 40000, 2000), new Vector3f(1, 1, 1));
-
-		Player player = new Player(person, new Vector3f(100, 0, -50), 0, 180, 0, 0.6f);
-		Camera camera = new Camera(player);
+		Light light = new Light(new Vector3f(0, 10000, -7000), new Vector3f(1, 1, 1));
+		List<Light> lights = new ArrayList<Light>();
+		lights.add(light);
+		lights.add(new Light(new Vector3f(-200,10,-200), new Vector3f(10,0,0)));
+		lights.add(new Light(new Vector3f(200,10,200), new Vector3f(0,0,10)));
+		
 		MasterRenderer renderer = new MasterRenderer();
 
-		while (!Display.isCloseRequested()) {
+		RawModel personModel = OBJLoader.loadObjModel("person", loader);
+		TexturedModel person = new TexturedModel(personModel, new ModelTexture(loader.loadTexture("playerTexture")));
 
+		Player player = new Player(person, new Vector3f(100, 5, -150), 0, 180, 0, 0.6f);
+		Camera camera = new Camera(player);
+
+		List<GuiTexture> guis = new ArrayList<GuiTexture>();
+		GuiTexture gui = new GuiTexture(loader.loadTexture("health"), new Vector2f(0.4f, -0.6f), new Vector2f(0.25f,0.25f));
+		guis.add(gui);
+
+		GuiRenderer guiRenderer = new GuiRenderer(loader);
+		
+		while (!Display.isCloseRequested()) {
 			player.move(terrain);
 			camera.move();
 			renderer.processEntity(player);
@@ -99,10 +113,12 @@ public class MainGameLoop {
 			for (Entity entity : entities) {
 				renderer.processEntity(entity);
 			}
-			renderer.render(light, camera);
+			renderer.render(lights, camera);
+			guiRenderer.render(guis);
 			DisplayManager.updateDisplay();
 		}
 
+		guiRenderer.cleanUp();
 		renderer.cleanUp();
 		loader.cleanUp();
 		DisplayManager.closeDisplay();
