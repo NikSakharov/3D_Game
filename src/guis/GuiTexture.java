@@ -25,5 +25,7 @@ public class GuiTexture {
 	public Vector2f getScale() {
 		return scale;
 	}
+	
+	
 
 }

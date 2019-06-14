@@ -6,7 +6,7 @@ public class Light {
 	
 	private Vector3f position;
 	private Vector3f colour;
-	private Vector3f attenuation = new Vector3f(1,0,0);
+	private Vector3f attenuation = new Vector3f(1, 0, 0);
 	
 	public Light(Vector3f position, Vector3f colour) {
 		this.position = position;
@@ -19,7 +19,7 @@ public class Light {
 		this.attenuation = attenuation;
 	}
 	
-	public Vector3f getAttenuation() {
+	public Vector3f getAttenuation(){
 		return attenuation;
 	}
 
@@ -39,4 +39,5 @@ public class Light {
 		this.colour = colour;
 	}
 	
+
 }
