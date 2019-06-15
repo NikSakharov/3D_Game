@@ -25,6 +25,4 @@ public class WaterTile {
 		return z;
 	}
 
-
-
 }
